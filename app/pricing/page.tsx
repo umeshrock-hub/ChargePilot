@@ -91,7 +91,7 @@ export default function PricingPage() {
 
 						<Link href="/checkout" className="block">
 							<Button
-								variant={plan.popular ? "classic" : "outline"}
+								variant={plan.popular ? "classic" : "ghost"}
 								className="w-full"
 								size="4"
 							>

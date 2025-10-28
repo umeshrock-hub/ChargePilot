@@ -64,13 +64,13 @@ export default async function InvoicesPage() {
 				<Button variant="classic" size="3">
 					All
 				</Button>
-				<Button variant="outline" size="3">
+				<Button variant="ghost" size="3">
 					Paid
 				</Button>
-				<Button variant="outline" size="3">
+				<Button variant="ghost" size="3">
 					Pending
 				</Button>
-				<Button variant="outline" size="3">
+				<Button variant="ghost" size="3">
 					Overdue
 				</Button>
 			</div>
@@ -140,10 +140,10 @@ export default async function InvoicesPage() {
 			<div className="mt-6 flex justify-between items-center text-3 text-gray-11">
 				<div>Showing 1-3 of 42 invoices</div>
 				<div className="flex gap-2">
-					<Button variant="outline" size="2" disabled>
+					<Button variant="ghost" size="2" disabled>
 						Previous
 					</Button>
-					<Button variant="outline" size="2">
+					<Button variant="ghost" size="2">
 						Next
 					</Button>
 				</div>

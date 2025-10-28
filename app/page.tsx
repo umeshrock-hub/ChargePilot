@@ -21,7 +21,7 @@ export default function HomePage() {
 							</Button>
 						</Link>
 						<Link href="/dashboard">
-							<Button variant="outline" size="4">
+							<Button variant="ghost" size="4">
 								Customer Portal
 							</Button>
 						</Link>

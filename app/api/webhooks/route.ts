@@ -10,18 +10,22 @@ export async function POST(request: NextRequest): Promise<Response> {
 	const webhookData = whopsdk.webhooks.unwrap(requestBodyText, { headers });
 
 	// Handle billing-related webhook events
-	switch (webhookData.type) {
+	// The SDK may type `webhookData.type` as a narrower union that doesn't
+	// include every possible event string. Cast to `string` so we can handle
+	// additional events (like `invoice.overdue`) without a TypeScript error.
+	const eventType = webhookData.type as string;
+	switch (eventType) {
 		case "invoice.paid":
-			waitUntil(handleInvoicePaid(webhookData.data));
+			waitUntil(handleInvoicePaid(webhookData.data as Invoice));
 			break;
 		case "invoice.created":
-			waitUntil(handleInvoiceCreated(webhookData.data));
+			waitUntil(handleInvoiceCreated(webhookData.data as Invoice));
 			break;
 		case "invoice.overdue":
-			waitUntil(handleInvoiceOverdue(webhookData.data));
+			waitUntil(handleInvoiceOverdue(webhookData.data as Invoice));
 			break;
 		case "invoice.cancelled":
-			waitUntil(handleInvoiceCancelled(webhookData.data));
+			waitUntil(handleInvoiceCancelled(webhookData.data as Invoice));
 			break;
 		case "payment.succeeded":
 			waitUntil(handlePaymentSucceeded(webhookData.data));

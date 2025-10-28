@@ -4,6 +4,7 @@ import Link from "next/link";
 
 export default async function SubscriptionsPage() {
 	const { user } = await getAuthenticatedUser();
+	const u = user as any;
 
 	return (
 		<div className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -54,7 +55,7 @@ export default async function SubscriptionsPage() {
 							<Button variant="classic" className="w-full" size="3">
 								Change Plan
 							</Button>
-							<Button variant="outline" className="w-full" size="3">
+							<Button variant="ghost" className="w-full" size="3">
 								Cancel Subscription
 							</Button>
 						</div>
@@ -144,10 +145,10 @@ export default async function SubscriptionsPage() {
 							<div>
 								<div className="text-2 text-gray-10">Billing Email</div>
 								<div className="font-semibold text-gray-12">
-									{user.email || "test@example.com"}
+									{u.email || "test@example.com"}
 								</div>
 							</div>
-							<Button variant="outline" className="w-full mt-4" size="3">
+							<Button variant="ghost" className="w-full mt-4" size="3">
 								Update Payment Method
 							</Button>
 						</div>

@@ -5,6 +5,10 @@ import { getAuthenticatedUser } from "@/lib/auth";
 export default async function PortalPage() {
 	// Verify user authentication (or use mock in development)
 	const { userId, user } = await getAuthenticatedUser();
+	// The SDK's `user` type can be a union that doesn't always include
+	// optional fields like `email`. Narrow to `any` for rendering UI fields
+	// to avoid TypeScript errors while still handling missing values safely.
+	const u = user as any;
 
 	return (
 		<div className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -51,7 +55,7 @@ export default async function PortalPage() {
 									View Invoices
 								</Button>
 							</Link>
-							<Button variant="outline" size="3">
+							<Button variant="ghost" size="3">
 								Manage Subscription
 							</Button>
 						</div>
@@ -115,19 +119,19 @@ export default async function PortalPage() {
 							<div>
 								<div className="text-2 text-gray-10">Name</div>
 								<div className="font-semibold text-gray-12">
-									{user.name || "No name set"}
+									{u.name || "No name set"}
 								</div>
 							</div>
 							<div>
 								<div className="text-2 text-gray-10">Username</div>
 								<div className="font-semibold text-gray-12">
-									@{user.username}
+									@{u.username}
 								</div>
 							</div>
 							<div>
 								<div className="text-2 text-gray-10">Email</div>
 								<div className="font-semibold text-gray-12">
-									{user.email || "Not provided"}
+									{u.email || "Not provided"}
 								</div>
 							</div>
 						</div>
@@ -145,14 +149,14 @@ export default async function PortalPage() {
 								</Button>
 							</Link>
 							<Link href="/invoices" className="block">
-								<Button variant="outline" className="w-full" size="3">
+								<Button variant="ghost" className="w-full" size="3">
 									View Invoices
 								</Button>
 							</Link>
-							<Button variant="outline" className="w-full" size="3">
+							<Button variant="ghost" className="w-full" size="3">
 								Update Payment Method
 							</Button>
-							<Button variant="outline" className="w-full" size="3">
+							<Button variant="ghost" className="w-full" size="3">
 								Contact Support
 							</Button>
 						</div>

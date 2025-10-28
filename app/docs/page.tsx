@@ -169,7 +169,7 @@ export default function DocsPage() {
 					<Button variant="classic" size="4">
 						Contact Support
 					</Button>
-					<Button variant="outline" size="4">
+					<Button variant="ghost" size="4">
 						Join Community
 					</Button>
 				</div>

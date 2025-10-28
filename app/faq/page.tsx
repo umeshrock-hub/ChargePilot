@@ -104,7 +104,7 @@ export default function FAQPage() {
 						</Button>
 					</Link>
 					<Link href="/docs">
-						<Button variant="outline" size="4">
+						<Button variant="ghost" size="4">
 							View Documentation
 						</Button>
 					</Link>
