@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
-.yarn/*
+.yarn/*!
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -34,10 +34,14 @@ yarn-error.log*
 .env
 .env*.local
 
-
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ChargePilot specific
+.env.local
+STRIPE_KEYS.md
+*_BACKUP.md
