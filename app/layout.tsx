@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Whop App",
-	description: "My Whop App",
+	title: "ChargePilot - Smart Business Billing",
+	description: "Streamline your billing, manage invoices, and automate payments with ChargePilot.",
 };
 
 export default function RootLayout({

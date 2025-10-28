@@ -3,18 +3,21 @@
 	"version": "0.2.0",
 	"private": true,
 	"scripts": {
-		"dev": "whop-proxy --command 'next dev --turbopack'",
+		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome lint"
 	},
 	"dependencies": {
+		"@stripe/react-stripe-js": "^5.3.0",
+		"@stripe/stripe-js": "^8.2.0",
 		"@vercel/functions": "^3.1.4",
 		"@whop/react": "0.3.0",
 		"@whop/sdk": "0.0.2",
 		"next": "16.0.0",
 		"react": "19.2.0",
-		"react-dom": "19.2.0"
+		"react-dom": "19.2.0",
+		"stripe": "^19.1.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.6",
@@ -22,6 +25,7 @@
 		"@types/node": "^20.19.21",
 		"@types/react": "19.2.2",
 		"@types/react-dom": "19.2.2",
+		"@types/stripe": "^8.0.417",
 		"@whop-apps/dev-proxy": "0.0.1-canary.117",
 		"dotenv-cli": "^10.0.0",
 		"tailwindcss": "^4.1.14",

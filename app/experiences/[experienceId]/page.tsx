@@ -1,6 +1,6 @@
 import { Button } from "@whop/react/components";
-import { headers } from "next/headers";
 import Link from "next/link";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { whopsdk } from "@/lib/whop-sdk";
 
 export default async function ExperiencePage({
@@ -9,15 +9,29 @@ export default async function ExperiencePage({
 	params: Promise<{ experienceId: string }>;
 }) {
 	const { experienceId } = await params;
-	// Ensure the user is logged in on whop.
-	const { userId } = await whopsdk.verifyUserToken(await headers());
+	// Get authenticated user (or mock in development)
+	const { userId, user: authUser } = await getAuthenticatedUser();
 
-	// Fetch the neccessary data we want from whop.
-	const [experience, user, access] = await Promise.all([
-		whopsdk.experiences.retrieve(experienceId),
-		whopsdk.users.retrieve(userId),
-		whopsdk.users.checkAccess(experienceId, { id: userId }),
-	]);
+	// In development, use mock data if not in Whop iframe
+	let experience, user, access;
+	
+	if (userId === "dev_user_id") {
+		// Mock data for local development
+		experience = {
+			id: experienceId,
+			name: "ChargePilot Professional",
+			description: "Smart billing solution for your business",
+		};
+		user = authUser;
+		access = { hasAccess: true };
+	} else {
+		// Fetch the neccessary data from whop.
+		[experience, user, access] = await Promise.all([
+			whopsdk.experiences.retrieve(experienceId),
+			whopsdk.users.retrieve(userId),
+			whopsdk.users.checkAccess(experienceId, { id: userId }),
+		]);
+	}
 
 	const displayName = user.name || `@${user.username}`;
 

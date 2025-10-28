@@ -9,13 +9,34 @@ export async function POST(request: NextRequest): Promise<Response> {
 	const headers = Object.fromEntries(request.headers);
 	const webhookData = whopsdk.webhooks.unwrap(requestBodyText, { headers });
 
-	// Handle the webhook event
-	if (webhookData.type === "invoice.paid") {
-		waitUntil(handleInvoicePaid(webhookData.data));
-	}
-
-	if (webhookData.type === "invoice.created") {
-		waitUntil(handleInvoiceCreated(webhookData.data));
+	// Handle billing-related webhook events
+	switch (webhookData.type) {
+		case "invoice.paid":
+			waitUntil(handleInvoicePaid(webhookData.data));
+			break;
+		case "invoice.created":
+			waitUntil(handleInvoiceCreated(webhookData.data));
+			break;
+		case "invoice.overdue":
+			waitUntil(handleInvoiceOverdue(webhookData.data));
+			break;
+		case "invoice.cancelled":
+			waitUntil(handleInvoiceCancelled(webhookData.data));
+			break;
+		case "payment.succeeded":
+			waitUntil(handlePaymentSucceeded(webhookData.data));
+			break;
+		case "payment.failed":
+			waitUntil(handlePaymentFailed(webhookData.data));
+			break;
+		case "subscription.created":
+			waitUntil(handleSubscriptionCreated(webhookData.data));
+			break;
+		case "subscription.cancelled":
+			waitUntil(handleSubscriptionCancelled(webhookData.data));
+			break;
+		default:
+			console.log("[UNHANDLED WEBHOOK]", webhookData.type);
 	}
 
 	// Make sure to return a 2xx status code quickly. Otherwise the webhook will be retried.
@@ -23,13 +44,49 @@ export async function POST(request: NextRequest): Promise<Response> {
 }
 
 async function handleInvoicePaid(invoice: Invoice) {
-	// This is a placeholder for a potentially long running operation
-	// In a real scenario, you might need to fetch user data, update a database, etc.
 	console.log("[INVOICE PAID]", invoice);
+	// In production: Update database, send confirmation email, trigger analytics event
 }
 
 async function handleInvoiceCreated(invoice: Invoice) {
-	// This is a placeholder for a potentially long running operation
-	// In a real scenario, you might need to fetch user data, update a database, etc.
 	console.log("[INVOICE CREATED]", invoice);
+	// In production: Send invoice to customer, update records, trigger notifications
+}
+
+async function handleInvoiceOverdue(invoice: Invoice) {
+	console.log("[INVOICE OVERDUE]", invoice);
+	// In production: Send overdue notice, trigger payment retry, update customer status
+}
+
+async function handleInvoiceCancelled(invoice: Invoice) {
+	console.log("[INVOICE CANCELLED]", invoice);
+	// In production: Update records, notify customer, process refunds if needed
+}
+
+async function handlePaymentSucceeded(data: any) {
+	console.log("[PAYMENT SUCCEEDED]", data);
+	// In production: Update subscription status, grant access, send receipt
+}
+
+async function handlePaymentFailed(data: any) {
+	console.log("[PAYMENT FAILED]", data);
+	// Import dunning logic for automated retry
+	const { handleFailedPayment, DEFAULT_DUNNING_CONFIG } = await import("@/lib/dunning");
+	
+	// Automatically handle failed payment with dunning
+	await handleFailedPayment(
+		data.invoice_id || data.id,
+		1, // First retry attempt
+		DEFAULT_DUNNING_CONFIG
+	);
+}
+
+async function handleSubscriptionCreated(data: any) {
+	console.log("[SUBSCRIPTION CREATED]", data);
+	// In production: Activate subscription, send welcome email, provision resources
+}
+
+async function handleSubscriptionCancelled(data: any) {
+	console.log("[SUBSCRIPTION CANCELLED]", data);
+	// In production: Revoke access, update status, send cancellation confirmation
 }

@@ -1,6 +1,6 @@
 import { Button } from "@whop/react/components";
-import { headers } from "next/headers";
 import Link from "next/link";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { whopsdk } from "@/lib/whop-sdk";
 
 export default async function DashboardPage({
@@ -9,15 +9,29 @@ export default async function DashboardPage({
 	params: Promise<{ companyId: string }>;
 }) {
 	const { companyId } = await params;
-	// Ensure the user is logged in on whop.
-	const { userId } = await whopsdk.verifyUserToken(await headers());
+	// Get authenticated user (or mock in development)
+	const { userId, user: authUser } = await getAuthenticatedUser();
 
-	// Fetch the neccessary data we want from whop.
-	const [company, user, access] = await Promise.all([
-		whopsdk.companies.retrieve(companyId),
-		whopsdk.users.retrieve(userId),
-		whopsdk.users.checkAccess(companyId, { id: userId }),
-	]);
+	// In development, use mock data if not in Whop iframe
+	let company, user, access;
+
+	if (userId === "dev_user_id") {
+		// Mock data for local development
+		company = {
+			id: companyId,
+			name: "Your Company",
+			description: "Business dashboard",
+		};
+		user = authUser;
+		access = { hasAccess: true };
+	} else {
+		// Fetch the neccessary data from whop.
+		[company, user, access] = await Promise.all([
+			whopsdk.companies.retrieve(companyId),
+			whopsdk.users.retrieve(userId),
+			whopsdk.users.checkAccess(companyId, { id: userId }),
+		]);
+	}
 
 	const displayName = user.name || `@${user.username}`;
 
