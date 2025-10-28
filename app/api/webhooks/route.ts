@@ -4,16 +4,24 @@ import type { NextRequest } from "next/server";
 import { whopsdk } from "@/lib/whop-sdk";
 
 export async function POST(request: NextRequest): Promise<Response> {
-	// Validate the webhook to ensure it's from Whop
+	// Validate the webhook to ensure it's from Whop. If validation fails
+	// return 400 so the sender knows the payload wasn't accepted.
 	const requestBodyText = await request.text();
-	const headers = Object.fromEntries(request.headers);
-	const webhookData = whopsdk.webhooks.unwrap(requestBodyText, { headers });
+	const headers = Object.fromEntries(request.headers as any);
+	let webhookData: any;
+	try {
+		webhookData = whopsdk.webhooks.unwrap(requestBodyText, { headers });
+	} catch (err) {
+		console.error("[WEBHOOK] signature/validation failed", err);
+		return new Response("Invalid webhook", { status: 400 });
+	}
 
 	// Handle billing-related webhook events
 	// The SDK may type `webhookData.type` as a narrower union that doesn't
 	// include every possible event string. Cast to `string` so we can handle
 	// additional events (like `invoice.overdue`) without a TypeScript error.
 	const eventType = webhookData.type as string;
+	const data = webhookData.data;
 	switch (eventType) {
 		case "invoice.paid":
 			waitUntil(handleInvoicePaid(webhookData.data as Invoice));
@@ -40,7 +48,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 			waitUntil(handleSubscriptionCancelled(webhookData.data));
 			break;
 		default:
-			console.log("[UNHANDLED WEBHOOK]", webhookData.type);
+			console.log("[UNHANDLED WEBHOOK]", eventType);
 	}
 
 	// Make sure to return a 2xx status code quickly. Otherwise the webhook will be retried.
